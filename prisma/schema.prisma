@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------
+// Geographical Models
+// ----------------------
+
+model AreaDivision {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  districts District[]
+  students  Student[]
+  teacher   Teacher[]
+}
+
+model District {
+  id             Int          @id @default(autoincrement())
+  name           String
+  areaDivisionId Int
+  areaDivision   AreaDivision @relation(fields: [areaDivisionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  thanas         Thana[]
+  students       Student[]
+  teacher        Teacher[]
+}
+
+model Thana {
+  id         Int       @id @default(autoincrement())
+  name       String
+  districtId Int
+  district   District  @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  students   Student[]
+  teacher    Teacher[]
+}
+
+// ----------------------
+// Academic Models
+// ----------------------
+
+model AcademicDivision {
+  id       Int             @id @default(autoincrement())
+  name     String          @unique
+  classes  AcademicClass[] // এই বিভাগের অধীনে সকল ক্লাস থাকবে
+  students Student[] // Opposite relation from Student
+  teacher  Teacher[]
+}
+
+model AcademicClass {
+  id                 Int              @id @default(autoincrement())
+  name               String
+  academicDivisionId Int // অ্যাকাডেমিক বিভাগের আইডি
+  academicDivision   AcademicDivision @relation(fields: [academicDivisionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  previousStudents   Student[]        @relation("PreviousClass") // পূর্বের ক্লাস হিসেবে যারা রেজিস্টার আছে
+  currentStudents    Student[]        @relation("CurrentClass") // বর্তমানে ক্লাস হিসেবে যারা রেজিস্টার আছে
+}
+
+// ----------------------
+// Student Model
+// ----------------------
+
+model Student {
+  id                 Int               @id @default(autoincrement())
+  name               String
+  arabicName         String
+  nid                String            @unique
+  gender             String
+  dob                DateTime
+  age                String
+  phone              String
+  // এখন আর bivag ফিল্ড নেই, কারণ অ্যাকাডেমিক বিভাগ ব্যবহার করা হচ্ছে
+  // Academic Information:
+  academicDivisionId Int? // ছাত্রের অ্যাকাডেমিক বিভাগ (ঐচ্ছিক হতে পারে)
+  academicDivision   AcademicDivision? @relation(fields: [academicDivisionId], references: [id])
+  previousClassId    Int? // পূর্বের ক্লাসের আইডি (ঐচ্ছিক)
+  previousClass      AcademicClass?    @relation("PreviousClass", fields: [previousClassId], references: [id])
+  currentClassId     Int? // বর্তমান ক্লাসের আইডি (ঐচ্ছিক)
+  currentClass       AcademicClass?    @relation("CurrentClass", fields: [currentClassId], references: [id])
+
+  // Personal and Parental Information:
+  fatherName       String
+  fatherarabicName String
+  fatherNid        String
+  fatherPhone      String
+  fatherOccupation String
+  motherName       String
+  motherNid        String
+  motherPhone      String
+  motherOccupation String
+
+  // Geographical (Address) Information:
+  areaDivisionId Int // বাধ্যতামূলক, ছাত্রের ঠিকানার বিভাগ
+  districtId     Int // বাধ্যতামূলক, জেলা
+  thanaId        Int // বাধ্যতামূলক, থানা
+  createdAt      DateTime @default(now())
+
+  areaDivision AreaDivision @relation(fields: [areaDivisionId], references: [id])
+  district     District     @relation(fields: [districtId], references: [id])
+  thana        Thana        @relation(fields: [thanaId], references: [id])
+  village      String
+}
+
+model Teacher {
+  id                 Int               @id @default(autoincrement())
+  name               String
+  arabicName         String
+  nid                String            @unique
+  gender             String
+  dob                DateTime
+  age                String
+  phone              String
+  // এখন আর bivag ফিল্ড নেই, কারণ অ্যাকাডেমিক বিভাগ ব্যবহার করা হচ্ছে
+  // Academic Information:
+  academicDivisionId Int? // ছাত্রের অ্যাকাডেমিক বিভাগ (ঐচ্ছিক হতে পারে)
+  academicDivision   AcademicDivision? @relation(fields: [academicDivisionId], references: [id])
+
+  // Personal and Parental Information:
+  fatherName       String
+  fatherarabicName String
+  fatherNid        String
+  fatherPhone      String
+  fatherOccupation String
+  motherName       String
+  motherNid        String
+  motherPhone      String
+  motherOccupation String
+
+  // Geographical (Address) Information:
+  areaDivisionId Int // বাধ্যতামূলক, ছাত্রের ঠিকানার বিভাগ
+  districtId     Int // বাধ্যতামূলক, জেলা
+  thanaId        Int // বাধ্যতামূলক, থানা
+  createdAt      DateTime @default(now())
+
+  areaDivision AreaDivision @relation(fields: [areaDivisionId], references: [id])
+  district     District     @relation(fields: [districtId], references: [id])
+  thana        Thana        @relation(fields: [thanaId], references: [id])
+  village      String
+}

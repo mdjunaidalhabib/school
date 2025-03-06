@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* ✅ Sidebar এর জন্য margin fix */
+main {
+  margin-left: 16 rem; /* Sidebar width (64 = 16rem) */
+}
+
+/* ✅ Body এর বেসিক স্টাইল */
+body {
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* ✅ Sidebar Link Styling */
+aside ul li a {
+  @apply block p-2 rounded-md hover:bg-gray-700 transition-all;
+}
+
+/* styles/globals.css */
+input.error {
+  border-color: red;
+  background-color: #ffe6e6;
+}
+
