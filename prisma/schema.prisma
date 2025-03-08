@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ----------------------
-// Geographical Models
-// ----------------------
-
 model AreaDivision {
   id        Int        @id @default(autoincrement())
   name      String     @unique
@@ -21,7 +17,7 @@ model AreaDivision {
 
 model District {
   id             Int          @id @default(autoincrement())
-  name           String
+  name           String       @unique
   areaDivisionId Int
   areaDivision   AreaDivision @relation(fields: [areaDivisionId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   thanas         Thana[]
@@ -31,16 +27,12 @@ model District {
 
 model Thana {
   id         Int       @id @default(autoincrement())
-  name       String
+  name       String    @unique
   districtId Int
   district   District  @relation(fields: [districtId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   students   Student[]
   teacher    Teacher[]
 }
-
-// ----------------------
-// Academic Models
-// ----------------------
 
 model AcademicDivision {
   id       Int             @id @default(autoincrement())
@@ -48,20 +40,18 @@ model AcademicDivision {
   classes  AcademicClass[] // এই বিভাগের অধীনে সকল ক্লাস থাকবে
   students Student[] // Opposite relation from Student
   teacher  Teacher[]
+  feeSetup FeeSetup[]
 }
 
 model AcademicClass {
   id                 Int              @id @default(autoincrement())
-  name               String
+  name               String           @unique
   academicDivisionId Int // অ্যাকাডেমিক বিভাগের আইডি
   academicDivision   AcademicDivision @relation(fields: [academicDivisionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   previousStudents   Student[]        @relation("PreviousClass") // পূর্বের ক্লাস হিসেবে যারা রেজিস্টার আছে
   currentStudents    Student[]        @relation("CurrentClass") // বর্তমানে ক্লাস হিসেবে যারা রেজিস্টার আছে
+  feeSetup           FeeSetup[]
 }
-
-// ----------------------
-// Student Model
-// ----------------------
 
 model Student {
   id                 Int               @id @default(autoincrement())
@@ -72,16 +62,12 @@ model Student {
   dob                DateTime
   age                String
   phone              String
-  // এখন আর bivag ফিল্ড নেই, কারণ অ্যাকাডেমিক বিভাগ ব্যবহার করা হচ্ছে
-  // Academic Information:
-  academicDivisionId Int? // ছাত্রের অ্যাকাডেমিক বিভাগ (ঐচ্ছিক হতে পারে)
-  academicDivision   AcademicDivision? @relation(fields: [academicDivisionId], references: [id])
-  previousClassId    Int? // পূর্বের ক্লাসের আইডি (ঐচ্ছিক)
-  previousClass      AcademicClass?    @relation("PreviousClass", fields: [previousClassId], references: [id])
-  currentClassId     Int? // বর্তমান ক্লাসের আইডি (ঐচ্ছিক)
-  currentClass       AcademicClass?    @relation("CurrentClass", fields: [currentClassId], references: [id])
-
-  // Personal and Parental Information:
+  academicDivisionId Int
+  academicDivision   AcademicDivision @relation(fields: [academicDivisionId], references: [id])
+  previousClassId    Int
+  previousClass      AcademicClass    @relation("PreviousClass", fields: [previousClassId], references: [id])
+  currentClassId     Int
+  currentClass       AcademicClass    @relation("CurrentClass", fields: [currentClassId], references: [id])
   fatherName       String
   fatherarabicName String
   fatherNid        String
@@ -91,31 +77,29 @@ model Student {
   motherNid        String
   motherPhone      String
   motherOccupation String
-
-  // Geographical (Address) Information:
   areaDivisionId Int // বাধ্যতামূলক, ছাত্রের ঠিকানার বিভাগ
   districtId     Int // বাধ্যতামূলক, জেলা
   thanaId        Int // বাধ্যতামূলক, থানা
-  createdAt      DateTime @default(now())
-
   areaDivision AreaDivision @relation(fields: [areaDivisionId], references: [id])
   district     District     @relation(fields: [districtId], references: [id])
   thana        Thana        @relation(fields: [thanaId], references: [id])
   village      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  studentFee   StudentFee[]
+  Transaction  Transaction[]
 }
 
 model Teacher {
   id                 Int               @id @default(autoincrement())
   name               String
   arabicName         String
-  nid                String            @unique
+  nid                String             @unique
   gender             String
   dob                DateTime
   age                String
   phone              String
-  // এখন আর bivag ফিল্ড নেই, কারণ অ্যাকাডেমিক বিভাগ ব্যবহার করা হচ্ছে
-  // Academic Information:
-  academicDivisionId Int? // ছাত্রের অ্যাকাডেমিক বিভাগ (ঐচ্ছিক হতে পারে)
+  academicDivisionId Int? 
   academicDivision   AcademicDivision? @relation(fields: [academicDivisionId], references: [id])
 
   // Personal and Parental Information:
@@ -130,13 +114,57 @@ model Teacher {
   motherOccupation String
 
   // Geographical (Address) Information:
-  areaDivisionId Int // বাধ্যতামূলক, ছাত্রের ঠিকানার বিভাগ
-  districtId     Int // বাধ্যতামূলক, জেলা
-  thanaId        Int // বাধ্যতামূলক, থানা
-  createdAt      DateTime @default(now())
-
+  areaDivisionId Int 
+  districtId     Int 
+  thanaId        Int 
   areaDivision AreaDivision @relation(fields: [areaDivisionId], references: [id])
   district     District     @relation(fields: [districtId], references: [id])
   thana        Thana        @relation(fields: [thanaId], references: [id])
   village      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model FeeSetup {
+  id                   Int        @id @default(autoincrement())
+  academicDivisionId   Int 
+  academicDivision     AcademicDivision @relation(fields: [academicDivisionId], references: [id])
+  academicClassId      Int 
+  academicClass        AcademicClass    @relation( fields: [academicClassId], references: [id])
+  admissionFee Float?
+  monthlyFee   Float?  
+  firstTermFee       Float?
+  secondTermFee      Float?
+  annualFee          Float?
+  monthlyOrTestFee   Float?     
+  hostelFee    Float?  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
+
+model StudentFee {
+  id          Int      @id @default(autoincrement())
+  studentId   Int    
+  admissionFee Float?
+  monthlyFee   Float?
+  examFee      Float?   
+  hostelFee    Float?  
+  discount     Float?  
+  totalFee     Float? 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  student     Student  @relation(fields: [studentId], references: [id])
+}
+
+model Transaction {
+  id              Int        @id @default(autoincrement())
+  studentId       Int  // ছাত্রের আইডি (Reference হবে)
+  amount          Float   // পরিশোধিত টাকা
+  paymentMethod   String // Cash, Bkash, Rocket, Bank Transfer
+  status          String  @default("pending") // pending, completed, failed
+  transactionDate DateTime @default(now())
+  createdAt       DateTime @default(now())
+  student         Student @relation(fields: [studentId], references: [id])
 }

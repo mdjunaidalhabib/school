@@ -142,14 +142,20 @@ const AcademicClassManagement = () => {
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="border p-2">ক্লাস নাম</th>
               <th className="border p-2">ডিভিশন</th>
+              <th className="border p-2">ক্লাস নাম</th>
               <th className="border p-2">অপারেশন</th>
             </tr>
           </thead>
           <tbody>
             {classes?.map((cls) => (
               <tr key={cls.id}>
+
+                <td className="border p-2">
+                  {cls.academicDivision?.name || "N/A"} {/* ✅ ঠিক করা হয়েছে */}
+                </td>
+
+
                 <td className="border p-2">
                   {editingClassId === cls.id ? (
                     <input
@@ -162,9 +168,10 @@ const AcademicClassManagement = () => {
                     cls.name
                   )}
                 </td>
-                <td className="border p-2">
-                  {cls.academicDivision?.name || "N/A"} {/* ✅ ঠিক করা হয়েছে */}
-                </td>
+
+
+
+
                 <td className="border p-2">
                   {editingClassId === cls.id ? (
                     <>
