@@ -8,6 +8,7 @@ export default async function handler(req, res) {
       console.log("📥 Received Data:", req.body); // এখানে চেক করো
 
       const {
+        imageUrl,
         name,
         arabicName,
         nid,
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
       // Prisma দিয়ে স্টুডেন্ট তৈরি করা
       const admission = await prisma.student.create({
         data: {
+          imageUrl,
           name,
           arabicName,
           nid,

@@ -13,6 +13,8 @@ export default function Sidebar() {
           <li className="mb-4"><a href="../src/fee-setup" className="hover:underline">fee-setup</a></li>
           <li className="mb-4"><a href="../src/StudentFeeCreate" lassName="hover:underline">StudentFeeCreate</a></li>
           <li className="mb-4"><a href="../src/testClass" className="hover:underline">TEST Class</a></li>
+          <li className="mb-4"><a href="../src/idcord" className="hover:underline">ID CORD</a></li>
+          <li className="mb-4"><a href="../src/ImageUpload" className="hover:underline">ImageUpload</a></li>
         </ul>
       </aside>
     );

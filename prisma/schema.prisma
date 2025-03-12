@@ -55,6 +55,7 @@ model AcademicClass {
 
 model Student {
   id                 Int               @id @default(autoincrement())
+  imageUrl           String?
   name               String
   arabicName         String
   nid                String            @unique
@@ -92,6 +93,7 @@ model Student {
 
 model Teacher {
   id                 Int               @id @default(autoincrement())
+  imageUrl           String?
   name               String
   arabicName         String
   nid                String             @unique
@@ -101,8 +103,6 @@ model Teacher {
   phone              String
   academicDivisionId Int? 
   academicDivision   AcademicDivision? @relation(fields: [academicDivisionId], references: [id])
-
-  // Personal and Parental Information:
   fatherName       String
   fatherarabicName String
   fatherNid        String
@@ -112,8 +112,6 @@ model Teacher {
   motherNid        String
   motherPhone      String
   motherOccupation String
-
-  // Geographical (Address) Information:
   areaDivisionId Int 
   districtId     Int 
   thanaId        Int 
@@ -168,3 +166,4 @@ model Transaction {
   createdAt       DateTime @default(now())
   student         Student @relation(fields: [studentId], references: [id])
 }
+

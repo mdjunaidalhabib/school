@@ -3,7 +3,7 @@
 import DivisionSelect from '../../components/DivisionSelect';
 import DistrictSelect from '../../components/DistrictSelect';
 import ThanaSelect from '../../components/ThanaSelect';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -29,6 +29,7 @@ const AdmissionForm = () => {
     motherPhone: "",
     motherOccupation: "",
     village: "",
+    imageUrl: "",
   });
 
   const calculateAge = (dob) => {
@@ -121,26 +122,70 @@ const [selectedPreviousClass, setSelectedPreviousClass] = useState(null);
     : academicClasses; // এখন যদি বিভাগ না সিলেক্ট করা হয়, তবে সব ক্লাস দেখাবে
 
 
-const handleSubmit = async (e) => {
+  const [preview, setPreview] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+
+    // Preview image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+
+const handleUploadAndSubmit = async (e) => {
   e.preventDefault();
 
-  // dob ফিল্ড থাকলে ISO ফরম্যাটে কনভার্ট করা
-  const formattedDob = formData?.dob ? new Date(formData.dob).toISOString() : null;
+  if (!selectedFile) {
+    alert("Please select an image first!");
+    return;
+  }
 
-  const newFormData = { 
-    selectedDivisionId: Number(selectedDivisionId),
-    selectedPreviousClass: Number(selectedPreviousClass),
-    selectedCurrentClass: Number(selectedCurrentClass),
-    selectedDivision: Number(selectedDivision),
-    selectedDistrict: Number(selectedDistrict),
-    selectedThana: Number(selectedThana),
-    dob: formattedDob, 
-  };
+  setLoading(true);
+
+  try {
+    // Step 1: Image Upload
+    const formDataImage = new FormData();
+    formDataImage.append("image", selectedFile);
+
+    const uploadResponse = await fetch("/api/upload", {
+      method: "POST",
+      body: formDataImage,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error(`HTTP error! status: ${uploadResponse.status}`);
+    }
+
+    const uploadData = await uploadResponse.json();
+    console.log("Uploaded Image URL:", uploadData.imageUrl);
+
+    // Step 2: Form Submission
+    const formattedDob = formData?.dob ? new Date(formData.dob).toISOString() : null;
+
+    const newFormData = { 
+      selectedDivisionId: Number(selectedDivisionId),
+      selectedPreviousClass: Number(selectedPreviousClass),
+      selectedCurrentClass: Number(selectedCurrentClass),
+      selectedDivision: Number(selectedDivision),
+      selectedDistrict: Number(selectedDistrict),
+      selectedThana: Number(selectedThana),
+      dob: formattedDob, 
+      imageUrl: uploadData.imageUrl, // আপলোড করা ইমেজ লিংক যোগ করা হলো
+    };
 
   console.log("✅ ফর্ম সফলভাবে সাবমিট হয়েছে!", newFormData);
   console.log("✅ ফর্ম সফলভাবে সাবমিট হয়েছে!", formData);
 
-  try {
+
   const response = await fetch("/api/admission", {
     method: "POST",
     headers: {
@@ -182,18 +227,22 @@ const handleSubmit = async (e) => {
       areaDivisionId : null,
       districtId : null,
       thanaId : null,
-      village: ""
+      village: "",
+      imageUrl: "",
     });
 
-     setSelectedDivision(null);
-     setSelectedDistrict(null);
-     setSelectedThana(null);
+    setSelectedDivision(null);
+    setSelectedDistrict(null);
+    setSelectedThana(null);
     setSelectedDivisionId(null);
     setSelectedPreviousClass(null);
     setSelectedCurrentClass(null);
+    
+    setSelectedFile(null); // Resetting file state
+    setPreview(null); // Resetting the preview image
+    fileInputRef.current.value = ''; // Resetting the file input field
 
-
-     
+    
   } else {
     setAlert({ message: result.message, type: 'error' });
   }
@@ -207,7 +256,7 @@ const handleSubmit = async (e) => {
   return (
     <div>
 
-    <form onSubmit={handleSubmit} className="space-y-8 p-6 border rounded-lg w-full max-w-6xl mx-auto">
+    <form onSubmit={handleUploadAndSubmit} className="space-y-8 p-6 border rounded-lg w-full max-w-6xl mx-auto">
 
       {/* First Section: Student's Information */}
       <div className="bg-gray-100 px-6 rounded-md">
@@ -215,6 +264,21 @@ const handleSubmit = async (e) => {
 
         <div className="grid grid-cols-5 gap-4">
           
+    <div
+        className="w-48 h-48 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 bg-cover bg-center"
+        style={{ backgroundImage: `url(${preview || "/upload-placeholder.png"})` }}
+        onClick={() => fileInputRef.current.click()}
+      >
+        {!preview && <span className="text-gray-500">ছবি আপলোড করুন</span>}
+      </div>
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        ref={fileInputRef}
+        className="hidden"
+      />
 
           <div>
             <label className="block text-sm font-medium text-gray-700">Student's Name</label>

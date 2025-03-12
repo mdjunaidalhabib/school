@@ -11,6 +11,7 @@ export default async function handler(req, res) {
         orderBy: { createdAt: "desc" },
         skip: (parseInt(page) - 1) * parseInt(limit),
         take: parseInt(limit),
+        
       });
       return res.status(200).json(students);
     }
