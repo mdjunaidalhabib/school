@@ -4,13 +4,16 @@ import axios from "axios";
 const fetchDistricts = async (divisionId) => {
   if (!divisionId) return [];
   const { data } = await axios.get("/api/divisions");
-  const selectedDivision = data
-  .find((div) => div.id === parseInt(divisionId));
+  const selectedDivision = data.find((div) => div.id === parseInt(divisionId));
   return selectedDivision ? selectedDivision.districts : [];
 };
 
 const DistrictSelect = ({ divisionId, onSelect, disabled }) => {
-  const { data: districts, isLoading, error } = useQuery({
+  const {
+    data: districts,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["districts", divisionId],
     queryFn: () => fetchDistricts(divisionId),
     enabled: !!divisionId,

@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     try {
       console.log("📥 Received Data:", req.body); // এখানে চেক করো
 
@@ -31,12 +31,17 @@ export default async function handler(req, res) {
         selectedDivision,
         selectedDistrict,
         selectedThana,
-        village
+        village,
       } = req.body;
 
       // ডেটা ভ্যালিডেশন (ঐচ্ছিক)
       if (!name || !nid || !phone || !dob) {
-        return res.status(400).json({ success: false, message: 'অবশ্যই কিছু কিছু তথ্য প্রদান করুন' });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "অবশ্যই কিছু কিছু তথ্য প্রদান করুন",
+          });
       }
 
       // Prisma দিয়ে স্টুডেন্ট তৈরি করা
@@ -69,12 +74,24 @@ export default async function handler(req, res) {
         },
       });
 
-      return res.status(201).json({ success: true, message: 'ভর্তি সফলভাবে সম্পন্ন হয়েছে', admission });
+      return res
+        .status(201)
+        .json({
+          success: true,
+          message: "ভর্তি সফলভাবে সম্পন্ন হয়েছে",
+          admission,
+        });
     } catch (error) {
       console.error("Error details:", error);
-      return res.status(500).json({ success: false, message: 'সমস্যা হয়েছে, আবার চেষ্টা করুন', error: error.message });
+      return res
+        .status(500)
+        .json({
+          success: false,
+          message: "সমস্যা হয়েছে, আবার চেষ্টা করুন",
+          error: error.message,
+        });
     }
   }
 
-  res.status(405).json({ success: false, message: 'Invalid Request Method' });
+  res.status(405).json({ success: false, message: "Invalid Request Method" });
 }

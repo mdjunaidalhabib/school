@@ -100,7 +100,9 @@ export default function FeeSetupForm() {
   // 🔹 ফিল্টার করা ক্লাস লিস্ট
   const filteredClasses = useMemo(() => {
     return selectedDivisionId
-      ? academicClasses?.filter((cls) => cls.academicDivisionId === Number(selectedDivisionId))
+      ? academicClasses?.filter(
+          (cls) => cls.academicDivisionId === Number(selectedDivisionId),
+        )
       : academicClasses;
   }, [selectedDivisionId, academicClasses]);
 
@@ -122,51 +124,102 @@ export default function FeeSetupForm() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">{editingId ? "ফি আপডেট করুন" : "নতুন ফি সেটআপ করুন"}</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        {editingId ? "ফি আপডেট করুন" : "নতুন ফি সেটআপ করুন"}
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <select value={selectedDivisionId} onChange={(e) => setSelectedDivisionId(e.target.value)} className="w-full p-3 border rounded">
+        <select
+          value={selectedDivisionId}
+          onChange={(e) => setSelectedDivisionId(e.target.value)}
+          className="w-full p-3 border rounded"
+        >
           <option value="">বিভাগ নির্বাচন করুন</option>
           {academicDivisions?.map((division) => (
-            <option key={division.id} value={division.id}>{division.name}</option>
+            <option key={division.id} value={division.id}>
+              {division.name}
+            </option>
           ))}
         </select>
 
-        <select value={selectedPreviousClass} onChange={(e) => setSelectedPreviousClass(e.target.value)} className="w-full p-3 border rounded">
+        <select
+          value={selectedPreviousClass}
+          onChange={(e) => setSelectedPreviousClass(e.target.value)}
+          className="w-full p-3 border rounded"
+        >
           <option value="">ক্লাস নির্বাচন করুন</option>
           {filteredClasses?.map((cls) => (
-            <option key={cls.id} value={cls.id}>{cls.name}</option>
+            <option key={cls.id} value={cls.id}>
+              {cls.name}
+            </option>
           ))}
         </select>
 
-        <input 
-        type="number" placeholder="ভর্তি ফি" value={admissionFee} 
-        onChange={(e) => setAdmissionFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="ভর্তি ফি"
+          value={admissionFee}
+          onChange={(e) => setAdmissionFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <input 
-        type="number" placeholder="মাসিক ফি" value={monthlyFee}
-        onChange={(e) => setMonthlyFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="মাসিক ফি"
+          value={monthlyFee}
+          onChange={(e) => setMonthlyFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <input 
-        type="number" placeholder="প্রথম সাময়িক ফি" value={firstTermFee} 
-        onChange={(e) => setFirstTermFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="প্রথম সাময়িক ফি"
+          value={firstTermFee}
+          onChange={(e) => setFirstTermFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <input 
-        type="number" placeholder="দ্বিতীয় সাময়িক ফি" value={secondTermFee} 
-        onChange={(e) => setSecondTermFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="দ্বিতীয় সাময়িক ফি"
+          value={secondTermFee}
+          onChange={(e) => setSecondTermFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <input 
-        type="number" placeholder="বার্ষিক ফি" value={annualFee} 
-        onChange={(e) => setAnnualFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="বার্ষিক ফি"
+          value={annualFee}
+          onChange={(e) => setAnnualFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <input 
-        type="number" placeholder="মাসিক বা টেস্ট পরিক্ষা ফি" value={monthlyOrTestFee} 
-        onChange={(e) => setMonthlyOrTestFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="মাসিক বা টেস্ট পরিক্ষা ফি"
+          value={monthlyOrTestFee}
+          onChange={(e) => setMonthlyOrTestFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <input 
-        type="number" placeholder="রুম ফি" value={hostelFee} 
-        onChange={(e) => setHostelFee(parseFloat(e.target.value) || 0)} className="w-full p-2 border rounded" />
+        <input
+          type="number"
+          placeholder="রুম ফি"
+          value={hostelFee}
+          onChange={(e) => setHostelFee(parseFloat(e.target.value) || 0)}
+          className="w-full p-2 border rounded"
+        />
 
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">{mutation.isLoading ? "লোড হচ্ছে..." : (editingId ? "আপডেট করুন" : "সংরক্ষণ করুন")}</button>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded"
+        >
+          {mutation.isLoading
+            ? "লোড হচ্ছে..."
+            : editingId
+              ? "আপডেট করুন"
+              : "সংরক্ষণ করুন"}
+        </button>
       </form>
 
       {/* ফি ডেটা প্রদর্শন করা */}
@@ -190,18 +243,48 @@ export default function FeeSetupForm() {
             <tbody>
               {feeData.map((fee) => (
                 <tr key={fee.id} className="border-b">
-                  <td className="px-4 py-2 border">{fee.academicDivision?.name || "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.academicClass?.name || "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.admissionFee ? fee.admissionFee : "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.monthlyFee ? fee.monthlyFee : "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.firstTermFee ? fee.firstTermFee : "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.secondTermFee ? fee.secondTermFee : "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.annualFee ? fee.annualFee : "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.monthlyOrTestFee ? fee.monthlyOrTestFee : "নির্ধারিত হয়নি"}</td>
-                  <td className="px-4 py-2 border">{fee.hostelFee ? fee.hostelFee : "নির্ধারিত হয়নি"}</td>
                   <td className="px-4 py-2 border">
-                    <button onClick={() => handleEdit(fee)} className="bg-yellow-500 text-white p-2 rounded">এডিট করুন</button>
-                    <button onClick={() => handleDelete(fee.id)} className="bg-red-500 text-white p-2 rounded ml-2">ডিলিট করুন</button>
+                    {fee.academicDivision?.name || "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.academicClass?.name || "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.admissionFee ? fee.admissionFee : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.monthlyFee ? fee.monthlyFee : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.firstTermFee ? fee.firstTermFee : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.secondTermFee ? fee.secondTermFee : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.annualFee ? fee.annualFee : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.monthlyOrTestFee
+                      ? fee.monthlyOrTestFee
+                      : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    {fee.hostelFee ? fee.hostelFee : "নির্ধারিত হয়নি"}
+                  </td>
+                  <td className="px-4 py-2 border">
+                    <button
+                      onClick={() => handleEdit(fee)}
+                      className="bg-yellow-500 text-white p-2 rounded"
+                    >
+                      এডিট করুন
+                    </button>
+                    <button
+                      onClick={() => handleDelete(fee.id)}
+                      className="bg-red-500 text-white p-2 rounded ml-2"
+                    >
+                      ডিলিট করুন
+                    </button>
                   </td>
                 </tr>
               ))}

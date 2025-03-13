@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 
 const ImageUpload = () => {
-
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,7 @@ const ImageUpload = () => {
     if (!selectedFile) {
       alert("Please select an image first!");
       return;
-    } 
+    }
 
     const formData = new FormData();
     formData.append("image", selectedFile); //   ✅ File object পাঠানো হবে
@@ -60,7 +59,9 @@ const ImageUpload = () => {
     <div className="max-w-md mx-auto p-4">
       <div
         className="w-48 h-48 border-2 border-dashed border-gray-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 bg-cover bg-center"
-        style={{ backgroundImage: `url(${preview || "/upload-placeholder.png"})` }}
+        style={{
+          backgroundImage: `url(${preview || "/upload-placeholder.png"})`,
+        }}
         onClick={() => fileInputRef.current.click()}
       >
         {!preview && <span className="text-gray-500">ছবি আপলোড করুন</span>}

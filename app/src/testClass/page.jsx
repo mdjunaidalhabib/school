@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 function AcademicForm() {
@@ -30,7 +30,7 @@ function AcademicForm() {
   // 🔹 ফিল্টার করা ক্লাস লিস্ট
   const filteredClasses = selectedDivisionId
     ? academicClasses?.filter(
-        (cls) => cls.academicDivisionId === Number(selectedDivisionId) // একে সংখ্যায় রূপান্তর করেছি
+        (cls) => cls.academicDivisionId === Number(selectedDivisionId), // একে সংখ্যায় রূপান্তর করেছি
       )
     : academicClasses; // এখন যদি বিভাগ না সিলেক্ট করা হয়, তবে সব ক্লাস দেখাবে
 
@@ -38,9 +38,9 @@ function AcademicForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = {
-      selectedDivisionId: Number(selectedDivisionId),  // সংখ্যা হিসেবে রূপান্তর
-      selectedPreviousClass: Number(selectedPreviousClass),  // সংখ্যা হিসেবে রূপান্তর
-      selectedCurrentClass: Number(selectedCurrentClass),  // সংখ্যা হিসেবে রূপান্তর
+      selectedDivisionId: Number(selectedDivisionId), // সংখ্যা হিসেবে রূপান্তর
+      selectedPreviousClass: Number(selectedPreviousClass), // সংখ্যা হিসেবে রূপান্তর
+      selectedCurrentClass: Number(selectedCurrentClass), // সংখ্যা হিসেবে রূপান্তর
     };
     console.log(formData); // এখন সংখ্যায় আসবে
 

@@ -22,7 +22,8 @@ export const config = {
 };
 
 const handler = (req, res) => {
-  upload.single("image")(req, res, (err) => {  // 'image' নামক ফিল্ড থেকে ফাইল নেওয়া হবে
+  upload.single("image")(req, res, (err) => {
+    // 'image' নামক ফিল্ড থেকে ফাইল নেওয়া হবে
     if (err) {
       console.error("Error uploading file:", err);
       return res.status(500).json({ error: "Error uploading file" });

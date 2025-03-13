@@ -11,7 +11,11 @@ const fetchThanas = async (districtId) => {
 };
 
 const ThanaSelect = ({ districtId, onSelect, disabled }) => {
-  const { data: thanas, isLoading, error } = useQuery({
+  const {
+    data: thanas,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["thanas", districtId],
     queryFn: () => fetchThanas(districtId),
     enabled: !!districtId,

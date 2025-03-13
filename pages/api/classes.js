@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+import prisma from "../../lib/prisma";
 
 // সব ক্লাসের লিস্ট দেখানো (GET)
 export async function getClasses(divisionsId) {
@@ -11,7 +11,7 @@ export async function getClasses(divisionsId) {
 }
 
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
+  if (req.method === "GET") {
     const { divisionsId } = req.query; // `divisionsId` query থেকে নেওয়া
 
     try {
@@ -20,11 +20,13 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: "ডাটা লোড করা যায়নি" });
     }
-
-  } else if (req.method === 'POST') {
+  } else if (req.method === "POST") {
     // নতুন ক্লাস যোগ করা
     const { name, divisionsId } = req.body;
-    if (!name || !divisionsId) return res.status(400).json({ error: "ক্লাসের নাম এবং বিভাগের ID প্রয়োজন" });
+    if (!name || !divisionsId)
+      return res
+        .status(400)
+        .json({ error: "ক্লাসের নাম এবং বিভাগের ID প্রয়োজন" });
 
     try {
       const newClass = await prisma.classes.create({
@@ -34,11 +36,11 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: "ক্লাস তৈরি করা যায়নি" });
     }
-
-  } else if (req.method === 'PUT') {
+  } else if (req.method === "PUT") {
     // ক্লাস আপডেট করা
     const { id, name } = req.body;
-    if (!id || !name) return res.status(400).json({ error: "ID এবং নতুন নাম প্রয়োজন" });
+    if (!id || !name)
+      return res.status(400).json({ error: "ID এবং নতুন নাম প্রয়োজন" });
 
     try {
       const updatedClass = await prisma.classes.update({
@@ -49,8 +51,7 @@ export default async function handler(req, res) {
     } catch (error) {
       res.status(500).json({ error: "ক্লাস আপডেট করা যায়নি" });
     }
-
-  } else if (req.method === 'DELETE') {
+  } else if (req.method === "DELETE") {
     // ক্লাস মুছে ফেলা
     const { id } = req.body;
     if (!id) return res.status(400).json({ error: "ID প্রয়োজন" });
@@ -60,11 +61,9 @@ export default async function handler(req, res) {
         where: { id: Number(id) },
       });
       res.status(200).json({ message: "ক্লাস মুছে ফেলা হয়েছে" });
-
     } catch (error) {
       res.status(500).json({ error: "ক্লাস মুছে ফেলা যায়নি" });
     }
-
   } else {
     res.status(405).json({ error: "এই HTTP মেথড অনুমোদিত নয়" });
   }

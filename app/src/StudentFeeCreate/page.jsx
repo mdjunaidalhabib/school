@@ -75,12 +75,14 @@ export default function StudentFeeCreate() {
 
       try {
         // ✅ স্টুডেন্টের তথ্য লোড করা
-        const studentResponse = await axios.get(`/api/student-fee/${studentId}`);
+        const studentResponse = await axios.get(
+          `/api/student-fee/${studentId}`,
+        );
         setStudent(studentResponse.data);
 
         // ✅ স্টুডেন্টের ডিভিশন ও ক্লাস অনুযায়ী ফি সেটআপ লোড করা
         const feeResponse = await axios.get(
-          `/api/fee-setup?division=${studentResponse.data.academicDivisionId}&class=${studentResponse.data.currentClassId}`
+          `/api/fee-setup?division=${studentResponse.data.academicDivisionId}&class=${studentResponse.data.currentClassId}`,
         );
 
         if (feeResponse.data.length > 0) {
@@ -107,7 +109,7 @@ export default function StudentFeeCreate() {
     if (feeSetup.length > 0 && student) {
       // ✅ Student এর currentClassId অনুযায়ী সঠিক ফি খুঁজে বের করা
       const matchedFee = feeSetup.find(
-        (fee) => fee.academicClassId === student.currentClassId
+        (fee) => fee.academicClassId === student.currentClassId,
       );
 
       if (matchedFee) {
@@ -126,70 +128,74 @@ export default function StudentFeeCreate() {
     }
   }, [feeSetup, student]);
 
-
   // ✅ Form Submit Handle করা
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // স্টুডেন্ট আইডি চেক
-  if (!student) {
-    setMessage("❌ Please enter a valid Student ID");
-    return;
-  }
-
-  // কোন ফি সিলেক্ট করা হয়নি
-  if (selectedFees.length === 0) {
-    setMessage("❌ Please select at least one fee type.");
-    return;
-  }
-
-  setLoading(true);
-  setMessage("");
-
-  // শুধু সিলেক্ট করা ফি গুলো নিয়ে ডাটা ফিল্টার করা
-  let filteredData = {
-    studentId: formData.studentId,
-    discount: formData.discount || "0",  // ডিসকাউন্ট যদি থাকে
-    totalFee: calculateTotalFee(),
-  };
-
-  // সিলেক্ট করা ফি গুলোর জন্য ডাটা অ্যাড করা
-  selectedFees.forEach((fee) => {
-    filteredData[fee] = formData[fee] || "0";  // যদি সিলেক্ট না করা থাকে, "0" ধরা হবে
-  });
-
-  console.log("🔹 Submitting Data:", filteredData); // কনসোলে চেক করার জন্য
-
-  try {
-    const response = await axios.post("/api/student-fee/create", filteredData);
-
-    if (response.data.success) {
-      setMessage("✅ Student Fee Added Successfully!");
-      setFormData({
-        studentId: "",
-        admissionFee: "",
-        monthlyFee: "",
-        examFee: "",
-        hostelFee: "",
-        discount: "",
-        totalFee: "",
-      });
-      setStudentId("");
-      setSelectedFees([]);  // সব চেকবক্স আনচেক হয়ে যাবে
-    } else {
-      setMessage("❌ Failed to Add Fee.");
+    // স্টুডেন্ট আইডি চেক
+    if (!student) {
+      setMessage("❌ Please enter a valid Student ID");
+      return;
     }
-  } catch (error) {
-    console.error("❌ Submission Error:", error);
-    setMessage("❌ Error Occurred!");
-  } finally {
-    setLoading(false);
-  }
-};
+
+    // কোন ফি সিলেক্ট করা হয়নি
+    if (selectedFees.length === 0) {
+      setMessage("❌ Please select at least one fee type.");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    // শুধু সিলেক্ট করা ফি গুলো নিয়ে ডাটা ফিল্টার করা
+    let filteredData = {
+      studentId: formData.studentId,
+      discount: formData.discount || "0", // ডিসকাউন্ট যদি থাকে
+      totalFee: calculateTotalFee(),
+    };
+
+    // সিলেক্ট করা ফি গুলোর জন্য ডাটা অ্যাড করা
+    selectedFees.forEach((fee) => {
+      filteredData[fee] = formData[fee] || "0"; // যদি সিলেক্ট না করা থাকে, "0" ধরা হবে
+    });
+
+    console.log("🔹 Submitting Data:", filteredData); // কনসোলে চেক করার জন্য
+
+    try {
+      const response = await axios.post(
+        "/api/student-fee/create",
+        filteredData,
+      );
+
+      if (response.data.success) {
+        setMessage("✅ Student Fee Added Successfully!");
+        setFormData({
+          studentId: "",
+          admissionFee: "",
+          monthlyFee: "",
+          examFee: "",
+          hostelFee: "",
+          discount: "",
+          totalFee: "",
+        });
+        setStudentId("");
+        setSelectedFees([]); // সব চেকবক্স আনচেক হয়ে যাবে
+      } else {
+        setMessage("❌ Failed to Add Fee.");
+      }
+    } catch (error) {
+      console.error("❌ Submission Error:", error);
+      setMessage("❌ Error Occurred!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold text-center mb-4">Create Student Fee</h2>
+      <h2 className="text-xl font-semibold text-center mb-4">
+        Create Student Fee
+      </h2>
 
       {message && <p className="text-center text-sm mb-3">{message}</p>}
 
@@ -208,9 +214,15 @@ const handleSubmit = async (e) => {
 
         {student && (
           <div className="mb-4 p-3 bg-gray-100 rounded">
-            <p><strong>Name:</strong> {student.name}</p>
-            <p><strong>Class:</strong> {student.currentClassId}</p>
-            <p><strong>Division:</strong> {student.academicDivisionId}</p>
+            <p>
+              <strong>Name:</strong> {student.name}
+            </p>
+            <p>
+              <strong>Class:</strong> {student.currentClassId}
+            </p>
+            <p>
+              <strong>Division:</strong> {student.academicDivisionId}
+            </p>
           </div>
         )}
 
@@ -264,7 +276,9 @@ const handleSubmit = async (e) => {
             {/* সিলেক্ট করা ফি ইনপুট */}
             {selectedFees.includes("admissionFee") && (
               <div className="mb-4">
-                <label className="block text-sm font-medium">Admission Fee:</label>
+                <label className="block text-sm font-medium">
+                  Admission Fee:
+                </label>
                 <input
                   type="number"
                   name="admissionFee"
@@ -277,7 +291,9 @@ const handleSubmit = async (e) => {
 
             {selectedFees.includes("monthlyFee") && (
               <div className="mb-4">
-                <label className="block text-sm font-medium">Monthly Fee:</label>
+                <label className="block text-sm font-medium">
+                  Monthly Fee:
+                </label>
                 <input
                   type="number"
                   name="monthlyFee"

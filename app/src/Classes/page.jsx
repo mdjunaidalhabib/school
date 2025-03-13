@@ -68,7 +68,10 @@ const AcademicClassManagement = () => {
       alert("অনুগ্রহ করে ক্লাসের নাম এবং ডিভিশন নির্বাচন করুন");
       return;
     }
-    createClassMutation.mutate({ name: newClassName, academicDivisionId: selectedDivisionId }); // ✅ ঠিক করা হয়েছে
+    createClassMutation.mutate({
+      name: newClassName,
+      academicDivisionId: selectedDivisionId,
+    }); // ✅ ঠিক করা হয়েছে
   };
 
   // ক্লাস এডিট মোড চালু করা
@@ -116,24 +119,24 @@ const AcademicClassManagement = () => {
           ))}
         </select>
         <input
-  type="text"
-  value={newClassName}
-  onChange={(e) => setNewClassName(e.target.value)}
-  className="w-full p-3 border rounded mb-2"
-  placeholder="নতুন ক্লাস নাম"
-  disabled={!selectedDivisionId} // একাডেমিক ডিভিশন না সিলেক্ট করলে ডিজেবল থাকবে
-/>
+          type="text"
+          value={newClassName}
+          onChange={(e) => setNewClassName(e.target.value)}
+          className="w-full p-3 border rounded mb-2"
+          placeholder="নতুন ক্লাস নাম"
+          disabled={!selectedDivisionId} // একাডেমিক ডিভিশন না সিলেক্ট করলে ডিজেবল থাকবে
+        />
         <button
-  onClick={handleCreateClass}
-  className={`px-4 py-2 rounded transition ${
-    !newClassName || !selectedDivisionId
-      ? "bg-gray-400 cursor-not-allowed"
-      : "bg-blue-500 hover:bg-blue-600 text-white"
-  }`}
-  disabled={!newClassName || !selectedDivisionId} // শর্ত অনুযায়ী ডিজেবল
->
-  তৈরি করুন
-</button>
+          onClick={handleCreateClass}
+          className={`px-4 py-2 rounded transition ${
+            !newClassName || !selectedDivisionId
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 text-white"
+          }`}
+          disabled={!newClassName || !selectedDivisionId} // শর্ত অনুযায়ী ডিজেবল
+        >
+          তৈরি করুন
+        </button>
       </div>
 
       {/* একাডেমিক ক্লাস লিস্ট */}
@@ -150,11 +153,9 @@ const AcademicClassManagement = () => {
           <tbody>
             {classes?.map((cls) => (
               <tr key={cls.id}>
-
                 <td className="border p-2">
                   {cls.academicDivision?.name || "N/A"} {/* ✅ ঠিক করা হয়েছে */}
                 </td>
-
 
                 <td className="border p-2">
                   {editingClassId === cls.id ? (
@@ -168,9 +169,6 @@ const AcademicClassManagement = () => {
                     cls.name
                   )}
                 </td>
-
-
-
 
                 <td className="border p-2">
                   {editingClassId === cls.id ? (

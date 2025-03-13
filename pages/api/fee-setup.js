@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   try {
-    if (req.method === 'POST') {
+    if (req.method === "POST") {
       // নতুন ফি সেটআপ তৈরি
       const {
         academicDivisionId,
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
       return res.status(201).json(newFeeSetup);
     }
 
-    if (req.method === 'GET') {
+    if (req.method === "GET") {
       // সব ফি সেটআপ রিটার্ন করা
       const feeSetups = await prisma.feeSetup.findMany({
         include: {
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
       return res.status(200).json(feeSetups);
     }
 
-    if (req.method === 'PUT') {
+    if (req.method === "PUT") {
       // ফি সেটআপ আপডেট করা
       const {
         id,
@@ -79,7 +79,7 @@ export default async function handler(req, res) {
       return res.status(200).json(updatedFeeSetup);
     }
 
-    if (req.method === 'DELETE') {
+    if (req.method === "DELETE") {
       // নির্দিষ্ট ফি সেটআপ ডিলিট করা
       const { id } = req.query;
 
@@ -87,10 +87,12 @@ export default async function handler(req, res) {
         where: { id: Number(id) },
       });
 
-      return res.status(200).json({ message: "Fee setup deleted successfully" });
+      return res
+        .status(200)
+        .json({ message: "Fee setup deleted successfully" });
     }
 
-    if (req.method === 'GET' && req.query.division && req.query.class) {
+    if (req.method === "GET" && req.query.division && req.query.class) {
       // Division ও Class অনুযায়ী ফি সেটআপ রিটার্ন করা
       const { division, class: classId } = req.query;
 
@@ -102,7 +104,11 @@ export default async function handler(req, res) {
       });
 
       if (!feeSetup) {
-        return res.status(404).json({ error: `No fee setup found for Division: ${division} and Class: ${classId}` });
+        return res
+          .status(404)
+          .json({
+            error: `No fee setup found for Division: ${division} and Class: ${classId}`,
+          });
       }
 
       return res.status(200).json(feeSetup);

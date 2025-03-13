@@ -1,14 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const fetchDivisions = async () => {
-  const { data } = await axios.get('/api/divisions');
+  const { data } = await axios.get("/api/divisions");
   return data;
 };
 
 const DivisionSelect = ({ onSelect }) => {
-  const { data: divisions, isLoading, error } = useQuery({
-    queryKey: ['divisions'],
+  const {
+    data: divisions,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["divisions"],
     queryFn: fetchDivisions,
   });
 

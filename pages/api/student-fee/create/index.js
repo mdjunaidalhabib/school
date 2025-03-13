@@ -4,12 +4,23 @@ const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { studentId, admissionFee, monthlyFee, examFee, hostelFee, discount, totalFee } = req.body;
+    const {
+      studentId,
+      admissionFee,
+      monthlyFee,
+      examFee,
+      hostelFee,
+      discount,
+      totalFee,
+    } = req.body;
 
     console.log(req.body); // ডাটা চেক করার জন্য লগ
 
     // ✅ যদি অন্তত ১টি ফি থাকে তাহলে সাবমিট হবে
-    if (!studentId || (!admissionFee && !monthlyFee && !examFee && !hostelFee)) {
+    if (
+      !studentId ||
+      (!admissionFee && !monthlyFee && !examFee && !hostelFee)
+    ) {
       return res.status(400).json({
         success: false,
         error: "অন্তত একটি ফি অবশ্যই পাঠাতে হবে!",

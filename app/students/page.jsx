@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from 'next/link';
+import Link from "next/link";
 
 const StudentsList = () => {
   const [students, setStudents] = useState([]);
@@ -80,15 +80,15 @@ const StudentsList = () => {
       </table>
 
       <div className="flex justify-center gap-4 mr-4">
-
         <div className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        <button onClick={handlePrevPage} disabled={page === 1}>Previous</button>
+          <button onClick={handlePrevPage} disabled={page === 1}>
+            Previous
+          </button>
         </div>
 
         <div className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        <button onClick={handleNextPage}>Next</button>
+          <button onClick={handleNextPage}>Next</button>
         </div>
-
       </div>
     </div>
   );

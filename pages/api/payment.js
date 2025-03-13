@@ -7,7 +7,10 @@ export async function POST(req) {
     const { studentId, amount } = await req.json();
 
     if (!studentId || !amount) {
-      return Response.json({ success: false, message: "Invalid data" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "Invalid data" },
+        { status: 400 },
+      );
     }
 
     const studentFee = await prisma.studentFee.findUnique({
@@ -15,7 +18,10 @@ export async function POST(req) {
     });
 
     if (!studentFee) {
-      return Response.json({ success: false, message: "Student not found" }, { status: 404 });
+      return Response.json(
+        { success: false, message: "Student not found" },
+        { status: 404 },
+      );
     }
 
     const updatedFee = await prisma.studentFee.update({
@@ -30,6 +36,9 @@ export async function POST(req) {
     return Response.json({ success: true, data: updatedFee });
   } catch (error) {
     console.error("Payment error:", error);
-    return Response.json({ success: false, message: "Internal Server Error" }, { status: 500 });
+    return Response.json(
+      { success: false, message: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }

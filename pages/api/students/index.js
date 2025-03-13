@@ -7,18 +7,19 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === "GET") {
-        const students = await prisma.student.findMany({
+      const students = await prisma.student.findMany({
         orderBy: { createdAt: "desc" },
         skip: (parseInt(page) - 1) * parseInt(limit),
         take: parseInt(limit),
-        
       });
       return res.status(200).json(students);
     }
 
     if (req.method === "PUT") {
       if (!id) {
-        return res.status(400).json({ error: "Student ID is required for updating" });
+        return res
+          .status(400)
+          .json({ error: "Student ID is required for updating" });
       }
 
       // `id` কে সংখ্যা হিসাবে নিতে হবে
@@ -42,7 +43,9 @@ export default async function handler(req, res) {
 
     if (req.method === "DELETE") {
       if (!id) {
-        return res.status(400).json({ error: "Student ID is required for deletion" });
+        return res
+          .status(400)
+          .json({ error: "Student ID is required for deletion" });
       }
 
       const studentId = parseInt(id);
