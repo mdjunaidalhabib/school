@@ -1,7 +1,6 @@
+import React from 'react'
 
-import React from "react";
-
-export default function page() {
+function cord4() {
   return (
     <div>
       <div className="w-[280px] h-[440px] bg-white overflow-hidden">
@@ -19,7 +18,7 @@ export default function page() {
           <img
             className="absolute w-[280px] h-[148px] top-0 left-0"
             alt="Rectangle"
-            src="/Rectangle 2.svg"
+            src="/Rectangle 9.svg"
           />
 
           <img
@@ -81,3 +80,5 @@ export default function page() {
     </div>
   );
 }
+
+export default cord4

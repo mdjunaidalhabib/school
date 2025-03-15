@@ -3,65 +3,55 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
-  const { id, page = 1, limit = 10 } = req.query; // `limit` যোগ করা হলো
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+  }
 
   try {
-    if (req.method === "GET") {
-      const students = await prisma.student.findMany({
-        orderBy: { createdAt: "desc" },
-        skip: (parseInt(page) - 1) * parseInt(limit),
-        take: parseInt(limit),
-      });
-      return res.status(200).json(students);
-    }
+    const page = parseInt(req.query.page) || 1; // বর্তমান পৃষ্ঠা (ডিফল্ট: 1)
+    const limit = parseInt(req.query.limit) || 10; // প্রতি পৃষ্ঠায় কতজন (ডিফল্ট: 10)
+    const skip = (page - 1) * limit; // কতজন স্কিপ করবে
+    const studentId = req.query.studentId || ""; // studentId ফিল্টার
+    const classId = req.query.classId || ""; // classId ফিল্টার
 
-    if (req.method === "PUT") {
-      if (!id) {
-        return res
-          .status(400)
-          .json({ error: "Student ID is required for updating" });
-      }
+    // মোট ছাত্র সংখ্যা বের করা
+    const totalStudents = await prisma.student.count({
+      where: {
+        AND: [
+          studentId ? { id: parseInt(studentId) } : {},
+          classId ? { currentClassId: parseInt(classId) } : {},
+        ],
+      },
+    });
 
-      // `id` কে সংখ্যা হিসাবে নিতে হবে
-      const studentId = parseInt(id);
-      if (isNaN(studentId)) {
-        return res.status(400).json({ error: "Invalid student ID format" });
-      }
+    // নির্দিষ্ট পৃষ্ঠার ছাত্রদের লিস্ট বের করা
+    const students = await prisma.student.findMany({
+      where: {
+        AND: [
+          studentId ? { id: parseInt(studentId) } : {},
+          classId ? { currentClassId: parseInt(classId) } : {},
+        ],
+      },
+      skip,
+      take: limit,
+      include: {
+        academicDivision: { select: { name: true } }, // একাডেমিক বিভাগ
+        currentClass: { select: { name: true } }, // বর্তমান ক্লাস
+      },
+      orderBy: { id: "desc" }, // নতুন ছাত্র আগে দেখাবে
+    });
 
-      // নিশ্চিত হওয়া যে `req.body`-তে ডাটা আছে
-      if (!req.body || Object.keys(req.body).length === 0) {
-        return res.status(400).json({ error: "No data provided for update" });
-      }
-
-      const updatedStudent = await prisma.student.update({
-        where: { id: studentId },
-        data: req.body,
-      });
-
-      return res.status(200).json(updatedStudent);
-    }
-
-    if (req.method === "DELETE") {
-      if (!id) {
-        return res
-          .status(400)
-          .json({ error: "Student ID is required for deletion" });
-      }
-
-      const studentId = parseInt(id);
-      if (isNaN(studentId)) {
-        return res.status(400).json({ error: "Invalid student ID format" });
-      }
-
-      await prisma.student.delete({ where: { id: studentId } });
-      return res.status(200).json({ message: "Student deleted successfully" });
-    }
-
-    // Unsupported methods
-    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(200).json({
+      students,
+      total: totalStudents, // মোট ছাত্র সংখ্যা ফেরত দিচ্ছে
+      page,
+      limit,
+      totalPages: Math.ceil(totalStudents / limit), // মোট পৃষ্ঠা সংখ্যা
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Database Error:", error);
+    return res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 }

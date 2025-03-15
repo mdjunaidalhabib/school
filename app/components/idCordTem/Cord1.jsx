@@ -1,7 +1,6 @@
+import React from 'react'
 
-import React from "react";
-
-export default function page() {
+function cord1({ student }) {
   return (
     <div>
       <div className="w-[280px] h-[440px] bg-white overflow-hidden">
@@ -40,8 +39,8 @@ export default function page() {
             src="/Rectangle 5.svg"
           />
 
-          <div className="absolute h-[19px] top-48 left-[55px] [font-family:'Inter-Bold',Helvetica] font-bold text-black text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
-            MD JUNAID AL HABIB
+          <div className="absolute h-[19px] top-48 left-[80px] [font-family:'Inter-Bold',Helvetica] font-bold text-black text-base text-center tracking-[0] leading-[normal] whitespace-nowrap">
+            {student.name}
           </div>
 
           <div className="absolute h-[22px] top-52 left-[95px] [font-family:'Jomolhari-Regular',Helvetica] font-normal text-black text-sm text-center tracking-[0] leading-[normal]">
@@ -61,16 +60,19 @@ export default function page() {
             Blood Group
             <br />
             Mobile
+            <br />
+            Id
           </p>
 
           <p className="mt-5 pt-1 absolute w-[141px] h-[215px] top-[209px] left-32 [font-family:'Jomolhari-Regular',Helvetica] font-normal text-black text-[13px] tracking-[0] leading-[normal]">
-            <br /> : Md Sanowar Hossain
-            <br />: Darul Ifta
-            <br />: 20/10/2006
-            <br />: Jamalpur
-            <br />: Dewangonj
+            <br />: {student.fatherName}
+            <br />: {student.currentClass}
+            <br />: {student.district?.name || "N/A"}
+            <br />: {student.districtName}
+            <br />: {student.thanaId}
             <br />: A-
-            <br />: 01788563988
+            <br />: {student.phone}
+            <br />: {student.id}
           </p>
 
           <div className="absolute h-[21px] top-[115px] left-[116px] [font-family:'Jomolhari-Regular',Helvetica] font-normal text-black text-[13px] tracking-[0] leading-[normal]">
@@ -81,3 +83,5 @@ export default function page() {
     </div>
   );
 }
+
+export default cord1
