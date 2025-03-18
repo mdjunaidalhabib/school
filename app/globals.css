@@ -21,3 +21,11 @@ input.error {
   border-color: red;
   background-color: #ffe6e6;
 }
+
+/* Chrome, Safari, Edge-এর জন্য */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+

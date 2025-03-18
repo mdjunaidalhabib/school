@@ -13,8 +13,12 @@ export default function StudentFeeCreate() {
     studentId: "",
     admissionFee: "",
     monthlyFee: "",
-    examFee: "",
-    hostelFee: "",
+    firstTermFee: "",
+    secondTermFee: "",
+    annualFee: "",
+    monthlyTermFee: "",
+    otherFee: "",
+    otherFee: "",
     discount: "",
     totalFee: "",
   });
@@ -49,15 +53,42 @@ export default function StudentFeeCreate() {
     const monthlyFee = selectedFees.includes("monthlyFee")
       ? parseFloat(formData.monthlyFee) || 0
       : 0;
-    const examFee = selectedFees.includes("examFee")
-      ? parseFloat(formData.examFee) || 0
+    const firstTermFee = selectedFees.includes("firstTermFee")
+      ? parseFloat(formData.firstTermFee) || 0
       : 0;
+
+    const secondTermFee = selectedFees.includes("secondTermFee")
+      ? parseFloat(formData.secondTermFee) || 0
+      : 0;
+
+    const annualFee = selectedFees.includes("annualFee")
+      ? parseFloat(formData.annualFee) || 0
+      : 0;
+
+    const monthlyTermFee = selectedFees.includes("monthlyTermFee")
+      ? parseFloat(formData.monthlyTermFee) || 0
+      : 0;
+
     const hostelFee = selectedFees.includes("hostelFee")
       ? parseFloat(formData.hostelFee) || 0
       : 0;
+
+    const otherFee = selectedFees.includes("otherFee")
+      ? parseFloat(formData.otherFee) || 0
+      : 0;
+
     const discount = parseFloat(formData.discount) || 0;
 
-    const total = admissionFee + monthlyFee + examFee + hostelFee - discount;
+    const total =
+      admissionFee +
+      monthlyFee +
+      firstTermFee +
+      secondTermFee +
+      annualFee +
+      monthlyTermFee +
+      hostelFee +
+      otherFee -
+      discount;
     return total.toFixed(2);
   };
 
@@ -76,13 +107,13 @@ export default function StudentFeeCreate() {
       try {
         // ✅ স্টুডেন্টের তথ্য লোড করা
         const studentResponse = await axios.get(
-          `/api/student-fee/${studentId}`,
+          `/api/student-fee/${studentId}`
         );
         setStudent(studentResponse.data);
 
         // ✅ স্টুডেন্টের ডিভিশন ও ক্লাস অনুযায়ী ফি সেটআপ লোড করা
         const feeResponse = await axios.get(
-          `/api/fee-setup?division=${studentResponse.data.academicDivisionId}&class=${studentResponse.data.currentClassId}`,
+          `/api/fee-setup?division=${studentResponse.data.academicDivisionId}&class=${studentResponse.data.currentClassId}`
         );
 
         if (feeResponse.data.length > 0) {
@@ -109,7 +140,7 @@ export default function StudentFeeCreate() {
     if (feeSetup.length > 0 && student) {
       // ✅ Student এর currentClassId অনুযায়ী সঠিক ফি খুঁজে বের করা
       const matchedFee = feeSetup.find(
-        (fee) => fee.academicClassId === student.currentClassId,
+        (fee) => fee.academicClassId === student.currentClassId
       );
 
       if (matchedFee) {
@@ -119,8 +150,12 @@ export default function StudentFeeCreate() {
           ...prev,
           admissionFee: matchedFee.admissionFee || "",
           monthlyFee: matchedFee.monthlyFee || "",
-          examFee: matchedFee.monthlyOrTestFee || "", // ✅ পরীক্ষার ফি
+          firstTermFee: matchedFee.firstTermFee || "",
+          secondTermFee: matchedFee.secondTermFee || "",
+          annualFee: matchedFee.annualFee || "",
+          monthlyTermFee: matchedFee.monthlyTermFee || "",
           hostelFee: matchedFee.hostelFee || "",
+          otherFee: matchedFee.otherFee || "",
         }));
       } else {
         console.warn("⚠️ No matching fee setup found!");
@@ -164,7 +199,7 @@ export default function StudentFeeCreate() {
     try {
       const response = await axios.post(
         "/api/student-fee/create",
-        filteredData,
+        filteredData
       );
 
       if (response.data.success) {
@@ -173,8 +208,12 @@ export default function StudentFeeCreate() {
           studentId: "",
           admissionFee: "",
           monthlyFee: "",
-          examFee: "",
-          hostelFee: "",
+          firstTermFee: "",
+          secondTermFee: "",
+          annualFee: "",
+          monthlyTermFee: "",
+          otherFee: "",
+          otherFee: "",
           discount: "",
           totalFee: "",
         });
@@ -233,43 +272,108 @@ export default function StudentFeeCreate() {
               <label className="block mb-2">Select Fee Type:</label>
               <div>
                 <input
+                  id="admissionFee"
                   type="checkbox"
                   name="admissionFee"
                   value="admissionFee"
                   onChange={() => handleFeeSelection("admissionFee")}
                   checked={selectedFees.includes("admissionFee")}
                 />
-                <label className="ml-2">Admission Fee</label>
+                <label htmlFor="admissionFee" className="ml-2">
+                  Admission Fee
+                </label>
               </div>
               <div>
                 <input
+                  id="monthlyFee"
                   type="checkbox"
                   name="monthlyFee"
                   value="monthlyFee"
                   onChange={() => handleFeeSelection("monthlyFee")}
                   checked={selectedFees.includes("monthlyFee")}
                 />
-                <label className="ml-2">Monthly Fee</label>
+                <label htmlFor="monthlyFee" className="ml-2">
+                  Monthly Fee
+                </label>
               </div>
               <div>
                 <input
+                  id="firstTermFee"
                   type="checkbox"
-                  name="examFee"
-                  value="examFee"
-                  onChange={() => handleFeeSelection("examFee")}
-                  checked={selectedFees.includes("examFee")}
+                  name="firstTermFee"
+                  value="firstTermFee"
+                  onChange={() => handleFeeSelection("firstTermFee")}
+                  checked={selectedFees.includes("firstTermFee")}
                 />
-                <label className="ml-2">Exam Fee</label>
+                <label htmlFor="firstTermFee" className="ml-2">
+                  firstTermFee
+                </label>
               </div>
               <div>
                 <input
+                  id="secondTermFee"
+                  type="checkbox"
+                  name="secondTermFee"
+                  value="secondTermFee"
+                  onChange={() => handleFeeSelection("secondTermFee")}
+                  checked={selectedFees.includes("secondTermFee")}
+                />
+                <label htmlFor="secondTermFee" className="ml-2">
+                  secondTermFee
+                </label>
+              </div>
+              <div>
+                <input
+                  id="annualFee"
+                  type="checkbox"
+                  name="annualFee"
+                  value="annualFee"
+                  onChange={() => handleFeeSelection("annualFee")}
+                  checked={selectedFees.includes("annualFee")}
+                />
+                <label htmlFor="annualFee" className="ml-2">
+                  annualFee
+                </label>
+              </div>
+
+              <div>
+                <input
+                  id="monthlyTermFee"
+                  type="checkbox"
+                  name="monthlyTermFee"
+                  value="monthlyTermFee"
+                  onChange={() => handleFeeSelection("monthlyTermFee")}
+                  checked={selectedFees.includes("monthlyTermFee")}
+                />
+                <label htmlFor="monthlyTermFee" className="ml-2">
+                  monthlyTermFee
+                </label>
+              </div>
+              <div>
+                <input
+                  id="hostelFee"
                   type="checkbox"
                   name="hostelFee"
                   value="hostelFee"
                   onChange={() => handleFeeSelection("hostelFee")}
                   checked={selectedFees.includes("hostelFee")}
                 />
-                <label className="ml-2">Hostel Fee</label>
+                <label htmlFor="hostelFee" className="ml-2">
+                  Hostel Fee
+                </label>
+              </div>
+              <div>
+                <input
+                  id="otherFee"
+                  type="checkbox"
+                  name="otherFee"
+                  value="otherFee"
+                  onChange={() => handleFeeSelection("otherFee")}
+                  checked={selectedFees.includes("otherFee")}
+                />
+                <label htmlFor="otherFee" className="ml-2">
+                  otherFee
+                </label>
               </div>
             </div>
 
@@ -285,6 +389,7 @@ export default function StudentFeeCreate() {
                   value={formData.admissionFee}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
+                  disabled
                 />
               </div>
             )}
@@ -300,19 +405,69 @@ export default function StudentFeeCreate() {
                   value={formData.monthlyFee}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
+                  disabled
                 />
               </div>
             )}
 
-            {selectedFees.includes("examFee") && (
+            {selectedFees.includes("firstTermFee") && (
               <div className="mb-4">
-                <label className="block text-sm font-medium">Exam Fee:</label>
+                <label className="block text-sm font-medium">
+                  firstTermFee:
+                </label>
                 <input
                   type="number"
-                  name="examFee"
-                  value={formData.examFee}
+                  name="firstTermFee"
+                  value={formData.firstTermFee}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
+                  disabled
+                />
+              </div>
+            )}
+
+            {selectedFees.includes("secondTermFee") && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium">
+                  secondTermFee:
+                </label>
+                <input
+                  type="number"
+                  name="secondTermFee"
+                  value={formData.secondTermFee}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  disabled
+                />
+              </div>
+            )}
+
+            {selectedFees.includes("annualFee") && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium">annualFee:</label>
+                <input
+                  type="number"
+                  name="annualFee"
+                  value={formData.annualFee}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  disabled
+                />
+              </div>
+            )}
+
+            {selectedFees.includes("monthlyTermFee") && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium">
+                  monthlyTermFee:
+                </label>
+                <input
+                  type="number"
+                  name="monthlyTermFee"
+                  value={formData.monthlyTermFee}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  disabled
                 />
               </div>
             )}
@@ -326,11 +481,27 @@ export default function StudentFeeCreate() {
                   value={formData.hostelFee}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border rounded-md"
+                  disabled
+                />
+              </div>
+            )}
+
+            {selectedFees.includes("otherFee") && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium">otherFee:</label>
+                <input
+                  type="number"
+                  name="otherFee"
+                  value={formData.otherFee}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border rounded-md"
+                  disabled
                 />
               </div>
             )}
 
             {/* ডিসকাউন্ট */}
+
             <div className="mb-4">
               <label className="block text-sm font-medium">Discount:</label>
               <input
@@ -338,7 +509,7 @@ export default function StudentFeeCreate() {
                 name="discount"
                 value={formData.discount}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border-2 border-sky-300 rounded-md focus:outline-sky-500"
               />
             </div>
 
@@ -349,7 +520,7 @@ export default function StudentFeeCreate() {
                 type="number"
                 name="totalFee"
                 value={calculateTotalFee()}
-                readOnly
+                disabled
                 className="w-full px-3 py-2 border rounded-md bg-gray-100"
               />
             </div>
@@ -358,7 +529,7 @@ export default function StudentFeeCreate() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-md"
+                className="text-white py-2 px-4 rounded-md bg-blue-600 text-white hover:bg-indigo-600"
               >
                 Submit Fee
               </button>

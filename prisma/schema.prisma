@@ -134,8 +134,10 @@ model FeeSetup {
   firstTermFee       Float?
   secondTermFee      Float?
   annualFee          Float?
-  monthlyOrTestFee   Float?     
+  monthlyTermFee   Float? 
   hostelFee    Float?  
+  otherFee   Float? 
+  totalFee     Float? 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -146,10 +148,13 @@ model StudentFee {
   id          Int      @id @default(autoincrement())
   studentId   Int    
   admissionFee Float?
-  monthlyFee   Float?
-  examFee      Float?   
+  monthlyFee   Float?  
+  firstTermFee       Float?
+  secondTermFee      Float?
+  annualFee          Float?
+  monthlyTermFee   Float? 
   hostelFee    Float?  
-  discount     Float?  
+  otherFee   Float?
   totalFee     Float? 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

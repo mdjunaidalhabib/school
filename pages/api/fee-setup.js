@@ -14,8 +14,10 @@ export default async function handler(req, res) {
         firstTermFee,
         secondTermFee,
         annualFee,
-        monthlyOrTestFee,
+        monthlyTermFee,
         hostelFee,
+        otherFee,
+        totalFee,
       } = req.body;
 
       const newFeeSetup = await prisma.feeSetup.create({
@@ -27,8 +29,10 @@ export default async function handler(req, res) {
           firstTermFee: parseFloat(firstTermFee),
           secondTermFee: parseFloat(secondTermFee),
           annualFee: parseFloat(annualFee),
-          monthlyOrTestFee: parseFloat(monthlyOrTestFee),
-          hostelFee: hostelFee ? parseFloat(hostelFee) : null,
+          monthlyTermFee: parseFloat(monthlyTermFee),
+          hostelFee: parseFloat(hostelFee),
+          otherFee:  parseFloat(otherFee),
+          totalFee:  parseFloat(totalFee),
         },
       });
 
@@ -57,8 +61,10 @@ export default async function handler(req, res) {
         firstTermFee,
         secondTermFee,
         annualFee,
-        monthlyOrTestFee,
+        monthlyTermFee,
         hostelFee,
+        otherFee,
+        totalFee,
       } = req.body;
 
       const updatedFeeSetup = await prisma.feeSetup.update({
@@ -71,8 +77,10 @@ export default async function handler(req, res) {
           firstTermFee: parseFloat(firstTermFee),
           secondTermFee: parseFloat(secondTermFee),
           annualFee: parseFloat(annualFee),
-          monthlyOrTestFee: parseFloat(monthlyOrTestFee),
-          hostelFee: hostelFee ? parseFloat(hostelFee) : null,
+          monthlyTermFee: parseFloat(monthlyTermFee),
+          hostelFee: parseFloat(hostelFee),
+          otherFee: parseFloat(otherFee),
+          totalFee: parseFloat(totalFee),
         },
       });
 
