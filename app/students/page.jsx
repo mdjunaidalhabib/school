@@ -11,9 +11,26 @@ const StudentsList = () => {
   const [totalStudents, setTotalStudents] = useState(0);
   const [classId, setClassId] = useState("all"); // Default "All Students"
   const [studentId, setStudentId] = useState("");
+  const [academicClasses, setAcademicClasses] = useState([]); // State for classes
   const studentsPerPage = 10;
   const [alertMessage, setAlertMessage] = useState("");
   const [totalPages, setTotalPages] = useState(1); // Added state for total pages
+
+  useEffect(() => {
+    // Load classes for the class dropdown
+    const fetchClasses = async () => {
+      try {
+        const res = await fetch("/api/academicClasses");
+        const data = await res.json();
+        setAcademicClasses(data);
+      } catch (err) {
+        console.error("Error fetching classes:", err);
+      }
+    };
+
+    fetchClasses();
+  }, []);
+  
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -32,14 +49,13 @@ const StudentsList = () => {
         setStudents(data.students);
         setTotalStudents(data.total);
         setTotalPages(Math.ceil(data.total / studentsPerPage));
-        // যদি কোনো স্টুডেন্ট না থাকে, তখন alert দেখাবে
         if (
           (studentId && data.students.length === 0) ||
           (classId !== "all" && data.students.length === 0)
         ) {
           setAlertMessage(`No student found with ID: ${studentId}`);
         } else {
-          setAlertMessage(""); // If students are found, clear the alert
+          setAlertMessage(""); // Clear the alert if students found
         }
       } catch (err) {
         setError(err.message);
@@ -49,7 +65,7 @@ const StudentsList = () => {
     };
 
     fetchStudents();
-  }, [page, classId, studentId, studentsPerPage]); // এখানে `studentsPerPage` যুক্ত করা হয়েছে
+  }, [page, classId, studentId, studentsPerPage]);
 
   const handleNextPage = () => {
     if (page < totalPages) setPage((prev) => prev + 1);
@@ -66,7 +82,6 @@ const StudentsList = () => {
       </div>
     );
 
-  // Error handling display
   if (error) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -76,7 +91,7 @@ const StudentsList = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 ">
+    <div className="container mx-auto p-6">
       {/* Alert section */}
       {alertMessage && (
         <div className="bg-red-100 text-red-700 p-4 mb-4 rounded-lg flex items-center">
@@ -97,9 +112,11 @@ const StudentsList = () => {
           className="p-2 border rounded"
         >
           <option value="all">All Students</option>
-          <option value="1">Class 1</option>
-          <option value="2">Class 2</option>
-          <option value="3">Class 3</option>
+          {academicClasses.map((classItem) => (
+            <option key={classItem.id} value={classItem.id}>
+              {classItem.name}
+            </option>
+          ))}
         </select>
 
         {/* Student ID Input */}

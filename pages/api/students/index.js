@@ -37,6 +37,8 @@ export default async function handler(req, res) {
       include: {
         academicDivision: { select: { name: true } }, // একাডেমিক বিভাগ
         currentClass: { select: { name: true } }, // বর্তমান ক্লাস
+        district: { select: { name: true } }, // জেলা (District)
+        thana: { select: { name: true } }, // থানা (Thana)
       },
       orderBy: { id: "desc" }, // নতুন ছাত্র আগে দেখাবে
     });

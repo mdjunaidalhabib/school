@@ -15,6 +15,13 @@ export default function Sidebar() {
       </Link>
 
       <Link
+        href="../src/Admission"
+        className="hover:bg-purple-700 mb-4 p-2 block"
+      >
+        Add students
+      </Link>
+
+      <Link
         href="../src/Allteachers"
         className="hover:bg-purple-700 mb-4 p-2 block"
       >

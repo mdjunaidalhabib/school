@@ -1,69 +1,160 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Cord1 from "../../components/idCordTem/Cord1";
 import Cord2 from "../../components/idCordTem/Cord2";
 import Cord3 from "../../components/idCordTem/Cord3";
 import Cord4 from "../../components/idCordTem/Cord4";
 
+const templates = { Cord1, Cord2, Cord3, Cord4 };
 
 const IdCardPage = () => {
-  const [className, setClassName] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("Cord1");
   const [students, setStudents] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState("default");
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [classId, setClassId] = useState("all");
+  const [studentId, setStudentId] = useState("");
+  const [academicClasses, setAcademicClasses] = useState([]);
+  const studentsPerPage = 10;
+  const [totalPages, setTotalPages] = useState(1);
 
+  // Fetch class list
   useEffect(() => {
-    if (className) {
-      axios
-        .get(`/api/students?className=${className}`)
-        .then((response) => setStudents(response.data))
-        .catch((error) => console.error("Error fetching students:", error));
-    }
-  }, [className]);
+    const fetchClasses = async () => {
+      try {
+        const res = await fetch("/api/academicClasses");
+        if (!res.ok) throw new Error("Failed to fetch class data");
 
-  // টেমপ্লেট সিলেক্ট করলে কম্পোনেন্ট পরিবর্তন হবে
-  const getTemplateComponent = () => {
-    switch (selectedTemplate) {
-      case "Cord2":
-        return Cord2;
-      case "default":
-      default:
-        return Cord1;
-      case "Cord3":
-        return Cord3;
-      case "Cord4":
-        return Cord4;
-    }
-  };
+        const data = await res.json();
+        setAcademicClasses(data);
+      } catch (err) {
+        console.error("Error fetching classes:", err);
+      }
+    };
 
-  const TemplateComponent = getTemplateComponent();
+    fetchClasses();
+  }, []);
+
+  // Fetch students based on filters
+  useEffect(() => {
+    const fetchStudents = async () => {
+      setLoading(true);
+      try {
+        let query = `/api/students?page=${page}&limit=${studentsPerPage}`;
+        if (classId && classId !== "all") query += `&classId=${classId}`;
+        if (studentId) query += `&studentId=${studentId}`;
+
+        const res = await fetch(query);
+        if (!res.ok) throw new Error("Failed to fetch students");
+
+        const data = await res.json();
+        setStudents(data.students);
+        setTotalPages(Math.ceil(data.total / studentsPerPage));
+      } catch (err) {
+        console.error("Error fetching students:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, [page, classId, studentId]);
+
+  const TemplateComponent = templates[selectedTemplate];
 
   return (
-    <div>
-      <h2>ID Card Generator</h2>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">ID Card Generator</h2>
 
-      {/* ক্লাস সিলেক্ট অপশন */}
-      <select onChange={(e) => setClassName(e.target.value)}>
-        <option value="">Select Class</option>
-        <option value="Class 1">Class 1</option>
-        <option value="Class 2">Class 2</option>
-      </select>
+      {/* Filters */}
+      <div className="flex gap-4 mb-6">
+        {/* Class Filter */}
+        <select
+          value={classId}
+          onChange={(e) => {
+            setClassId(e.target.value);
+            setStudentId("");
+            setPage(1);
+          }}
+          className="p-2 border rounded"
+        >
+          <option value="all">All Classes</option>
+          {academicClasses.map((classItem) => (
+            <option key={classItem.id} value={classItem.id}>
+              {classItem.name}
+            </option>
+          ))}
+        </select>
 
-      {/* টেমপ্লেট সিলেক্ট */}
-      <select onChange={(e) => setSelectedTemplate(e.target.value)}>
-        <option value="Cord1">Default Template</option>
-        <option value="Cord2">Cord2</option>
-        <option value="Cord3">Cord3</option>
-        <option value="Cord4">Cord4</option>
-      </select>
-
-      {/* আইডি কার্ড রেন্ডার */}
-      <div className="id-card-container">
-        {students.map((student) => (
-          <TemplateComponent key={student.id} student={student} />
-        ))}
+        {/* Student ID Filter */}
+        <input
+          type="number"
+          value={studentId}
+          onChange={(e) => {
+            setStudentId(e.target.value);
+            setClassId("all");
+          }}
+          placeholder="Enter Student ID"
+          className="p-2 border rounded"
+        />
       </div>
+
+      {/* Template Selection */}
+      <select
+        onChange={(e) => setSelectedTemplate(e.target.value)}
+        className="p-2 border rounded mb-6"
+      >
+        {Object.keys(templates).map((key) => (
+          <option key={key} value={key}>
+            {key}
+          </option>
+        ))}
+      </select>
+
+      {/* Display Students */}
+      {loading ? (
+        <div className="flex justify-center items-center h-32">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500"></div>
+        </div>
+      ) : students.length === 0 ? (
+        <div className="flex justify-center items-center h-32">
+          <p className="text-red-500">No students found.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-5 gap-4">
+            {students.map((student) => (
+              <TemplateComponent key={student.id} student={student} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-6 gap-4">
+              {page > 1 && (
+                <button
+                  onClick={() => setPage(page - 1)}
+                  className="p-2 border rounded bg-blue-500 text-white"
+                >
+                  Previous
+                </button>
+              )}
+              <span className="p-2">
+                Page {page} of {totalPages}
+              </span>
+              {page < totalPages && (
+                <button
+                  onClick={() => setPage(page + 1)}
+                  className="p-2 border rounded bg-blue-500 text-white"
+                >
+                  Next
+                </button>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };
