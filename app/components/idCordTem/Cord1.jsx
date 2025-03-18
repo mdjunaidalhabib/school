@@ -99,6 +99,6 @@ const Cord1 = ({ student }) => {
       </div>
     </div>
   );
-}
+};
 
 export default Cord1;

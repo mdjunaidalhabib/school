@@ -97,6 +97,6 @@ const Cord2 = ({ student }) => {
       </div>
     </div>
   );
-}
+};
 
 export default Cord2;
